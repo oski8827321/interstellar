@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interstellar – Technické & zajímavé informace</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', Arial, sans-serif;
+      color: #eaeaea;
+      min-height: 100vh;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      position: relative;
+    }
+    /* Jemně rozmazané pozadí */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -1;
+      background: url('background.png') center center / cover no-repeat;
+      filter: blur(6px) brightness(0.65);
+    }
+    .navbar {
+      width: 100%;
+      background: rgba(20,22,27,0.85);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 12px #0005;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 99;
+      padding: 0 40px;
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(80,80,80,0.19);
+    }
+    .navbar ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: row;
+      gap: 46px;
+    }
+    .navbar ul li a {
+      color: #eaeaea;
+      text-decoration: none;
+      font-size: 1.07em;
+      letter-spacing: 2px;
+      transition: color 0.2s, border-bottom 0.2s, text-shadow 0.2s;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+      font-weight: 500;
+      opacity: 0.93;
+      text-shadow: 0 0 10px #4fc3f7, 0 0 2px #fff;
+    }
+    .navbar ul li a:hover,
+    .navbar ul li a.active {
+      color: #fff;
+      border-bottom: 2px solid #4fc3f7;
+      opacity: 1;
+      text-shadow: 0 0 16px #4fc3f7, 0 0 4px #fff;
+    }
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 110px 18px 60px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 54px;
+    }
+    .main-title {
+      font-size: 3em;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 8px;
+      margin-bottom: 0;
+      text-align: left;
+      line-height: 1.13;
+      margin-top: 30px;
+      text-shadow: 0 0 20px #4fc3f7, 0 0 10px #fff;
+      animation: fadeInDownGlow 1.1s;
+    }
+    .subtitle {
+      color: #cdcdcd;
+      font-size: 1.39em;
+      margin-bottom: 35px;
+      text-align: left;
+      max-width: 660px;
+      text-shadow: 0 0 10px #4fc3f7, 0 0 4px #fff;
+      animation: fadeInDownGlow 1.3s;
+    }
+    .section {
+      display: flex;
+      gap: 48px;
+      align-items: flex-start;
+      justify-content: stretch;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(60px) scale(0.98);
+      transition: opacity 0.7s cubic-bezier(.65,.01,.57,1.05), transform 0.7s cubic-bezier(.65,.01,.57,1.05);
+      background: #000000;
+      border-radius: 20px;
+      box-shadow: 0 6px 32px #0009;
+      padding: 38px 28px;
+      margin-bottom: 20px;
+      animation: fadeInUpGlow 1.5s;
+    }
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      box-shadow: 0 0 40px #000a, 0 2px 16px #000b;
+    }
+    .section:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+    .text {
+      flex: 2 1 350px;
+      font-size: 1.13em;
+      color: #eaeaea;
+      line-height: 1.8;
+      min-width: 220px;
+      max-width: 540px;
+      margin: 0 10px;
+      text-shadow: 0 0 10px #4fc3f7, 0 0 2px #fff;
+      animation: fadeTextGlow 1.8s;
+    }
+    .image {
+      flex: 1 1 220px;
+      max-width: 360px;
+      margin: 0 10px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .image img {
+      width: 100%;
+      max-width: 340px;
+      border-radius: 16px;
+      box-shadow: 0 0 32px #000a, 0 2px 20px #0009;
+      transition: transform 0.32s, box-shadow 0.32s;
+      opacity: 0.97;
+      filter: grayscale(8%) brightness(1.08);
+    }
+    .image img:hover {
+      transform: scale(1.08) rotate(-2deg);
+      opacity: 1;
+      box-shadow: 0 0 80px #4fc3f766, 0 2px 40px #fff3;
+      filter: none;
+    }
+    @media (max-width: 900px) {
+      .container {
+        gap: 36px;
+        padding: 100px 3vw 64px 3vw;
+      }
+      .section {
+        flex-direction: column !important;
+        gap: 24px;
+      }
+      .text {
+        max-width: 100%;
+      }
+      .image {
+        max-width: 100%;
+        margin-bottom: 0;
+      }
+    }
+    @media (max-width: 600px) {
+      .main-title {
+        font-size: 1.65em;
+        margin-top: 16px;
+      }
+      .subtitle {
+        font-size: 1em;
+      }
+      .container {
+        gap: 22px;
+        padding-bottom: 24px;
+      }
+      .section {
+        padding: 14px 6px;
+      }
+    }
+    @keyframes fadeInDownGlow {
+      from { opacity: 0; transform: translateY(-50px) scale(1.05);}
+      to { opacity: 1; transform: translateY(0) scale(1);}
+    }
+    @keyframes fadeInUpGlow {
+      from { opacity: 0; transform: translateY(70px) scale(0.96);}
+      to { opacity: 1; transform: translateY(0) scale(1);}
+    }
+    @keyframes fadeTextGlow {
+      from { opacity: 0; text-shadow: none;}
+      to { opacity: 1; text-shadow: 0 0 10px #4fc3f7, 0 0 2px #fff;}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <ul>
+      <li><a href="index.html" class="active">Úvod</a></li>
+      <li><a href="story.html">Story</a></li>
+      <li><a href="planets.html">Planety</a></li>
+    </ul>
+  </nav>
+  <div class="container">
+    <div>
+      <div class="main-title">INTERSTELLAR</div>
+      <div class="subtitle">
+        Moderní sci-fi snímek, který posunul hranice filmové technologie i vědecké přesnosti. Zde najdete nejzásadnější technické a produkční zajímavosti filmu.
+      </div>
+    </div>
+    <div class="section">
+      <div class="image">
+        <img src="kamera.png
+        " alt="Natáčení Interstellar IMAX kamera">
+      </div>
+      <div class="text">
+        <b>Natáčení na IMAX a 35mm film</b><br>
+        Interstellar byl natáčen kombinací analogových IMAX a 35mm kamer, což dává filmu mimořádnou hloubku a ostrost obrazu. Režisér Christopher Nolan tím podtrhl autentický zážitek z vesmíru. IMAX sekvence byly klíčové pro vizuálně bohaté scény planet a vesmíru.
+        <br>
+        <span style="font-size:0.95em;color:#b3b3b3;">Zdroj: IMAX.com</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="image">
+        <img src="blackhole.png" alt="Vizuální efekty černá díra">
+      </div>
+      <div class="text">
+        <b>Simulace černé díry Gargantua</b><br>
+        Vizuální efekty Interstellaru vznikly za spolupráce s fyzikem Kipem Thornem. Simulace černé díry Gargantua byla natolik vědecky přesná, že inspirovala reálný výzkum v astrofyzice. Efekty získaly Oscara za nejlepší vizuální efekty.
+        <br>
+        <span style="font-size:0.95em;color:#b3b3b3;">Zdroj: Wired</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="image">
+        <img src="ranger.png" alt="Model vesmírné lodi Ranger">
+      </div>
+      <div class="text">
+        <b>Praktické efekty a modely</b><br>
+        Všechny vesmírné lodě (Ranger, Endurance, Lander) byly postaveny jako funkční modely v životní velikosti. Štáb používal hydrauliku, aby simuloval pohyb v beztíže, a herci byli skutečně zavěšeni v kabinách, což přidává autentičnost hereckým výkonům a záběrům.
+        <br>
+        <span style="font-size:0.95em;color:#b3b3b3;">Zdroj: Space.com</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="image">
+        <img src="mann.png" alt="Christopher Nolan na place s IMAX kamerou">
+      </div>
+      <div class="text">
+        <b>Režie a štáb</b><br>
+        Režisér Christopher Nolan je známý důrazem na vědeckou přesnost i lidské emoce. Produkce zahrnovala špičkové odborníky na vizuální efekty, fyziku, hudbu (Hans Zimmer) a praktické triky. Spolupráce s vědci byla klíčová pro autenticitu děje i vizuální stránku.
+        <br>
+        <span style="font-size:0.95em;color:#b3b3b3;">Zdroj: Indian Express</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="image">
+        <img src="sound.png" alt="Hudební nahrávání Hans Zimmer">
+      </div>
+      <div class="text">
+        <b>Hudba Hanse Zimmera</b><br>
+        Soundtrack složil Hans Zimmer a je považován za jeden z nejlepších v historii sci-fi. Hudba byla nahrávána na historických varhanách v londýnském chrámu Temple Church, což jí dává unikátní zvuk. Zimmer pracoval přímo s Nolanem a hudba byla často skládána na základě pocitů, které měl režisér během psaní scénáře.
+        <br>
+        <span style="font-size:0.95em;color:#b3b3b3;">Zdroj: The Guardian</span>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Animace na scroll: sekce se objeví/vynechají při pohybu
+    function onScrollAnim() {
+      document.querySelectorAll('.section').forEach(sec => {
+        const top = sec.getBoundingClientRect().top;
+        const bottom = sec.getBoundingClientRect().bottom;
+        const visible = top < window.innerHeight - 60 && bottom > 0;
+        if (visible) sec.classList.add('visible');
+        else sec.classList.remove('visible');
+      });
+    }
+    window.addEventListener('scroll', onScrollAnim);
+    window.addEventListener('resize', onScrollAnim);
+    window.addEventListener('load', onScrollAnim);
+  </script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Interstellar – Planety</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', Arial, sans-serif;
+      color: #eaeaea;
+      min-height: 100vh;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      position: relative;
+      background: #000;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -1;
+      background: url('background.png') center center / cover no-repeat;
+      filter: blur(6px) brightness(0.65);
+    }
+    .navbar {
+      width: 100%;
+      background: rgba(20,22,27,0.85);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 12px #0005;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 99;
+      padding: 0 40px;
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(80,80,80,0.19);
+    }
+    .navbar ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: row;
+      gap: 46px;
+    }
+    .navbar ul li a {
+      color: #eaeaea;
+      text-decoration: none;
+      font-size: 1.07em;
+      letter-spacing: 2px;
+      transition: color 0.2s, border-bottom 0.2s, text-shadow 0.2s;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+      font-weight: 500;
+      opacity: 0.93;
+      text-shadow: 0 0 10px #4fc3f7, 0 0 2px #fff;
+    }
+    .navbar ul li a:hover,
+    .navbar ul li a.active {
+      color: #fff;
+      border-bottom: 2px solid #4fc3f7;
+      opacity: 1;
+      text-shadow: 0 0 16px #4fc3f7, 0 0 4px #fff;
+    }
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 110px 18px 60px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 54px;
+    }
+    .main-title {
+      font-size: 2.4em;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 8px;
+      margin-bottom: 0;
+      text-align: left;
+      line-height: 1.13;
+      margin-top: 30px;
+      text-shadow: 0 0 20px #4fc3f7, 0 0 10px #fff;
+      animation: fadeInDownGlow 1.1s;
+    }
+    .subtitle {
+      color: #cdcdcd;
+      font-size: 1.15em;
+      margin-bottom: 35px;
+      text-align: left;
+      max-width: 660px;
+      text-shadow: 0 0 10px #4fc3f7, 0 0 4px #fff;
+      animation: fadeInDownGlow 1.3s;
+    }
+    .section {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      justify-content: stretch;
+      flex-wrap: wrap;
+      background: #000000;
+      border-radius: 20px;
+      box-shadow: 0 6px 32px #0009;
+      padding: 38px 28px;
+      margin-bottom: 20px;
+      animation: fadeInUpGlow 1.5s;
+    }
+    .section .image {
+      flex: 1 1 320px;
+      max-width: 400px;
+      min-width: 220px;
+      margin: 0 10px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .section .image img {
+      width: 100%;
+      max-width: 320px;
+      aspect-ratio: 1/1;
+      border-radius: 18px;
+      box-shadow: 0 0 32px #000a, 0 2px 20px #0009;
+      transition: transform 0.32s, box-shadow 0.32s;
+      opacity: 0.97;
+      filter: grayscale(8%) brightness(1.08);
+      background: #131b22;
+      object-fit: cover;
+    }
+    .section .image img:hover {
+      transform: scale(1.08) rotate(-2deg);
+      opacity: 1;
+      box-shadow: 0 0 80px #4fc3f766, 0 2px 40px #fff3;
+      filter: none;
+    }
+    .section .text {
+      flex: 2 1 350px;
+      font-size: 1.13em;
+      color: #eaeaea;
+      line-height: 1.8;
+      min-width: 220px;
+      max-width: 100%;
+      margin: 0 10px;
+      text-shadow: 0 0 10px #4fc3f7, 0 0 2px #fff;
+      animation: fadeTextGlow 1.8s;
+    }
+    /* Styles for sections without an image */
+    .section.no-image {
+        padding-top: 24px;
+        padding-bottom: 24px;
+        align-items: center;
+    }
+    .section.no-image .image {
+        display: none;
+    }
+    .section.no-image .text {
+        flex-basis: 100%;
+        max-width: 80%;
+        margin: 0 auto;
+    }
+    .planet-title {
+      font-size: 1.35em;
+      color: #4fc3f7;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 12px #4fc3f7, 0 0 3px #fff;
+    }
+    .planet-params {
+      margin-bottom: 12px;
+      font-size: 1.04em;
+      color: #aeeaff;
+    }
+    .planet-lore {
+      margin-top: 10px;
+      color: #d4f1ff;
+      font-size: 1.08em;
+      font-style: italic;
+    }
+    .planet-info-list {
+      margin: 12px 0 0 0;
+      padding-left: 16px;
+      font-size: 1em;
+      color: #b3eaff;
+    }
+    .planet-meta {
+      margin-top: 10px;
+      font-size: 0.97em;
+      color: #7ad6f7;
+      font-style: italic;
+    }
+    /* Advanced timer styles */
+    .advanced-timer-box {
+      background: #181d23;
+      border-radius: 14px;
+      box-shadow: 0 0 16px #4fc3f7a0, 0 0 8px #0006;
+      padding: 18px 24px;
+      margin: 18px 0 0 0;
+      font-family: 'Roboto Mono', 'Roboto', monospace;
+      color: #eaeaea;
+      max-width: 410px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .advanced-timer-label {
+      color: #4fc3f7;
+      font-size: 1.09em;
+      font-weight: 700;
+      margin-bottom: 2px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px #4fc3f7;
+    }
+    .advanced-timer-times {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      font-size: 1.22em;
+      margin-bottom: 4px;
+      width: 100%;
+    }
+    .advanced-timer-times span {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+    }
+    .advanced-timer-bar {
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 5px;
+      width: 0;
+      background: linear-gradient(90deg, #4fc3f7 30%, #fff 100%);
+      transition: width 0.34s cubic-bezier(.45,.2,.29,.99);
+      z-index: 2;
+      border-radius: 3px;
+      opacity: 0.8;
+    }
+    @media (max-width: 900px) {
+      .container {
+        gap: 36px;
+        padding: 100px 3vw 64px 3vw;
+      }
+      .section, .section.no-image {
+        flex-direction: column !important;
+        gap: 24px;
+      }
+      .text {
+        max-width: 100%;
+      }
+      .image {
+        max-width: 100%;
+        margin-bottom: 0;
+      }
+      .advanced-timer-box {
+        max-width: 98vw;
+      }
+    }
+    @media (max-width: 600px) {
+      .main-title {
+        font-size: 1.2em;
+        margin-top: 16px;
+      }
+      .subtitle {
+        font-size: 0.97em;
+      }
+      .container {
+        gap: 22px;
+        padding-bottom: 24px;
+      }
+      .section {
+        padding: 14px 6px;
+      }
+      .image img {
+        max-width: 98vw;
+      }
+    }
+    @keyframes fadeInDownGlow {
+      from { opacity: 0; transform: translateY(-50px) scale(1.05);}
+      to { opacity: 1; transform: translateY(0) scale(1);}
+    }
+    @keyframes fadeInUpGlow {
+      from { opacity: 0; transform: translateY(70px) scale(0.96);}
+      to { opacity: 1; transform: translateY(0) scale(1);}
+    }
+    @keyframes fadeTextGlow {
+      from { opacity: 0; text-shadow: none;}
+      to { opacity: 1; text-shadow: 0 0 10px #4fc3f7, 0 0 2px #fff;}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <ul>
+      <li><a href="index.html">Úvod</a></li>
+      <li><a href="story.html">Story</a></li>
+      <li><a href="planets.html" class="active">Planety</a></li>
+    </ul>
+  </nav>
+  <div class="container">
+    <div>
+      <div class="main-title">PLANETY VE FILMU INTERSTELLAR</div>
+      <div class="subtitle">
+      </div>
+    </div>
+    <!-- Miller -->
+    <div class="section">
+      <div class="image">
+        <img src="planeta-miller.png" alt="Millerova planeta">
+      </div>
+      <div class="text">
+        <div class="planet-title">MILLEROVA PLANETA</div>
+        <div class="planet-params">
+          Typ: Vodní planeta <br>
+          Časová dilatace: <b>1 hodina na Zemi = 7 let na Millerově planetě</b><br>
+          Povrch: Oceán, občasné přílivové vlny vysoké až 1,5km<br>
+          Atmosféra: Voda, nízké množství kyslíku<br>
+          Lokalita: První zastávka Endurance po průchodu červí dírou
+        </div>
+        <ul class="planet-info-list">
+          <li>Každá sekunda na Zemi = <b>61320 sekund</b> (≈17 hodin) na Millerově planetě.</li>
+          <li>Millerova planeta je nevhodná pro život, hrozí extrémní přílivy a nedostatek pevniny.</li>
+        </ul>
+        <div class="planet-lore">
+          <b>Lore & informace:</b> <br>
+          Miller byla vybraná pro průzkum kvůli signálu astronautky Millerové. Extrémní gravitační dilatace znamenala, že posádka Endurance zde přišla o desítky let pozemského času během krátké návštěvy. Planeta je ikonická pro Interstellar a motiv času.
+        </div>
+        <div class="planet-meta">
+        </div>
+        <!-- Advanced animated timer -->
+        <div class="advanced-timer-box">
+          <div class="advanced-timer-label">Simulace časové dilatace:</div>
+          <div class="advanced-timer-times">
+            <span>
+              <b>Země</b>
+              <span id="timer-earth">00:00:00</span>
+            </span>
+            <span>
+              <b>Millerova planeta</b>
+              <span id="timer-miller">00:00:00</span>
+            </span>
+          </div>
+          <div class="advanced-timer-bar" id="timer-bar"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Mann -->
+    <div class="section no-image">
+      <div class="image">
+        <!-- Image intentionally left blank -->
+      </div>
+      <div class="text">
+        <div class="planet-title">MANNOVA PLANETA</div>
+        <div class="planet-params">
+          Typ: Ledová planeta <br>
+          Povrch: Led, amoniak, trhliny<br>
+          Atmosféra: Tenká, zmrzlá, nehostinná<br>
+          Lokalita: Druhá planeta navštívená posádkou Endurance
+        </div>
+        <ul class="planet-info-list">
+          <li>Planeta byla kandidátem na nový domov, ale dr. Mann zde zfalšoval data kvůli záchraně.</li>
+          <li>Extrémní podmínky, nestabilní povrch, nemožnost dlouhodobého přežití.</li>
+        </ul>
+        <div class="planet-lore">
+          <b>Lore & informace:</b><br>
+          Mannova planeta se stala dějištěm dramatické zrády dr. Manna. Povrch je tvořen ledem a amoniakem, při pokusu o opuštění došlo k explozi, která málem zničila Endurance. Planeta je varováním před lidskou zradou a zoufalstvím.
+        </div>
+        <div class="planet-meta">
+        </div>
+      </div>
+    </div>
+    <!-- Edmunds -->
+    <div class="section no-image">
+      <div class="image">
+        <!-- Image intentionally left blank -->
+      </div>
+      <div class="text">
+        <div class="planet-title">EDMUNDSOVA PLANETA</div>
+        <div class="planet-params">
+          Typ: Skalnatá, horská planeta<br>
+          Povrch: Hory, pevná půda, mírné klima<br>
+          Atmosféra: Dýchatelná, potenciál pro vegetaci<br>
+          Lokalita: Třetí planeta, Brand sem odlétá na konci filmu
+        </div>
+        <ul class="planet-info-list">
+          <li>Nejvhodnější kandidát pro nový začátek lidstva.</li>
+          <li>Signál z expedice Edmunds zde vydržel po dlouhá léta.</li>
+          <li>Planeta je nadějí pro budoucí generace.</li>
+        </ul>
+        <div class="planet-lore">
+          <b>Lore & informace:</b><br>
+          Edmundsova planeta je symbolem naděje. Právě zde může vzniknout nová lidská kolonie. V lore se často spekuluje, jak zde Brand přežila a začala nový život.
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Poměr: 1 hodina na Zemi = 7 let na Millerově planetě
+    const DILATION_FACTOR = 61320;
+
+    let earthSeconds = 0;
+    let millerSeconds = 0;
+    let timerInterval = null;
+
+    function formatTimer(secs) {
+      secs = Math.floor(secs);
+      let h = Math.floor(secs / 3600);
+      let m = Math.floor((secs % 3600) / 60);
+      let s = Math.floor(secs % 60);
+      return (h < 10 ? "0" : "") + h + ":" +
+             (m < 10 ? "0" : "") + m + ":" +
+             (s < 10 ? "0" : "") + s;
+    }
+
+    function updateTimerDisplay() {
+      const timerEarthEl = document.getElementById('timer-earth');
+      const timerMillerEl = document.getElementById('timer-miller');
+      const timerBar = document.getElementById('timer-bar');
+      
+      if(timerEarthEl && timerMillerEl && timerBar) {
+        timerEarthEl.textContent = formatTimer(earthSeconds);
+        timerMillerEl.textContent = formatTimer(millerSeconds);
+
+        const barMax = 3600; // bar resets every hour
+        let barPercent = (earthSeconds % barMax) / barMax;
+        let targetWidth = Math.round(barPercent * 100) + "%";
+        timerBar.style.width = targetWidth;
+      }
+    }
+
+    function tick() {
+      earthSeconds += 0.05;
+      millerSeconds += DILATION_FACTOR * 0.05;
+      updateTimerDisplay();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateTimerDisplay();
+      timerInterval = setInterval(tick, 50);
+    });
+  </script>
+</body>
+</html>
